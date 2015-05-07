@@ -1,0 +1,7 @@
+{
+    "email":"a@b.c",
+    "password":"123",
+    "host":"smtp.com",
+    "port":587,
+    "to":"c@b.c"
+}
