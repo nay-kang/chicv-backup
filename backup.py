@@ -7,10 +7,10 @@ import smtplib
 from email.mime.text import MIMEText
 from subprocess import call
 
+#generat current data string
+today = date.today()
+today_str = today.strftime('%Y%m%d')
 
-
-with open('db.json') as data_file:
-    dbConf = json.load(data_file)
 
 #send email function
 def sendMail(subject,message):
@@ -22,20 +22,42 @@ def sendMail(subject,message):
     s.login(mailConf['email'],mailConf['password']);
     s.sendmail(mailConf['email'],mailConf['to'],message);
 
-today = date.today()
-today_str = today.strftime('%Y%m%d')
-cmd = "%s -u%s -p%s %s > %s-%s.sql"%(dbConf['bin'],dbConf['user'],dbConf['password'],dbConf['database'],dbConf['database'],today_str);
+#backup database
+def backupDatabase():
+    with open('db.json') as data_file:
+        dbConf = json.load(data_file)
+    cmd = "%s -u%s -p%s %s > %s-%s.sql"%(dbConf['bin'],dbConf['user'],dbConf['password'],dbConf['database'],dbConf['database'],today_str);
+    code = os.system(cmd);
+    if(code!=0):
+        sendMail('database','database export error')
+        return
+    cmd = 'tar zcvf %s/%s-%s.sql.tar.gz %s-%s.sql'%(dbConf['backup_path'],dbConf['database'],today_str,dbConf['database'],today_str)
+    code = os.system(cmd);
+    cmd = 'rm -rf %s-%s.sql'%(dbConf['database'],today_str)
+    code = os.system(cmd);
 
-code = os.system(cmd);
-if(code!=0):
-    sendMail('database','database export error')
-    sys.exit(0)
+def rsyncFiles():
+    with open('file.json') as data_file:
+        fileConf = json.load(data_file)
+    cmd = 'rsync -vrcz --stats %s %s'%(fileConf['source'],fileConf['dest'])
+    code = os.system(cmd)
+    if(code!=0):
+        sendMail('file rsync','file rsync failed')
 
-cmd = 'tar zcvf %s-%s.sql.tar.gz %s-%s.sql'%(dbConf['database'],today_str,dbConf['database'],today_str)
+def tarFiles():
+    with open('file.json') as data_file:
+        fileConf = json.load(data_file)
+    cmd = 'tar zcvf %s/%s-%s.tar.gz %s'%(fileConf['backup_path'],fileConf['name'],today_str,fileConf['source']);
+    code = os.system(cmd)
+    if(code!=0):
+        sendMail('tar file','tar file failed')
+        return
 
-code = os.system(cmd);
-cmd = 'rm -rf %s-%s.sql'%(dbConf['database'],today_str)
-code = os.system(cmd);
+def uploadToS3():
+    #TODO
 
-
-
+backupDatebase()
+rsyncFiles()
+#backup files every thuesday
+if(today.weekday()==1):
+    tarFiles()

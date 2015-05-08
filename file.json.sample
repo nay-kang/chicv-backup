@@ -1,0 +1,6 @@
+{
+    "source":"source_path",
+    "dest":"dest_path",
+    "backup_path":"backup_path",
+    "name":"tar name"
+}

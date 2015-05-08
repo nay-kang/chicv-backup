@@ -2,5 +2,6 @@
     "bin":"/usr/bin/mysqldump",
     "user":"root",
     "password":"root",
-    "database":"database"
+    "database":"database",
+    "backup_path":"path"
 }
