@@ -55,8 +55,9 @@ def tarFiles():
 
 def uploadToS3():
     #TODO
+    return
 
-backupDatebase()
+backupDatabase()
 rsyncFiles()
 #backup files every thuesday
 if(today.weekday()==1):
