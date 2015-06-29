@@ -1,0 +1,4 @@
+{
+	"local":"/local/path/",
+	"remote":"user@host:/remote/path"
+}
