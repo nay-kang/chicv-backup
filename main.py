@@ -22,8 +22,8 @@ def backupDatabase():
 
 #rsync all image files
 def rsyncFiles():
-    fileConf = _util.readConf('file.json')
-    cmd = 'rsync -vrcz --stats %s %s'%(fileConf['source'],fileConf['dest'])
+    fileConf = _util.readConf('remote_sync.json')
+    cmd = 'rsync -vrczL --stats %s %s'%(fileConf['local'],fileConf['remote'])
     code = os.system(cmd)
     if(code!=0):
         _util.sendMail('file rsync','file rsync failed')
@@ -31,7 +31,7 @@ def rsyncFiles():
 #archvie all image files
 def tarFiles():
     fileConf = _util.readConf('file.json')
-    cmd = 'tar zcvf %s/%s-%s.tar.gz %s'%(fileConf['backup_path'],fileConf['name'],today_str,fileConf['source']);
+    cmd = 'tar zcvfh %s/%s-%s.tar.gz %s'%(fileConf['backup_path'],fileConf['name'],today_str,fileConf['source']);
     code = os.system(cmd)
     if(code!=0):
         _util.sendMail('tar file','tar file failed')
