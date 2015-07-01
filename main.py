@@ -23,7 +23,7 @@ def backupDatabase():
 #rsync all image files
 def rsyncFiles():
     fileConf = _util.readConf('remote_sync.json')
-    cmd = 'rsync -vrczL --stats %s %s'%(fileConf['local'],fileConf['remote'])
+    cmd = 'rsync -vrczL --delete --stats %s %s'%(fileConf['local'],fileConf['remote'])
     code = os.system(cmd)
     if(code!=0):
         _util.sendMail('file rsync','file rsync failed')
