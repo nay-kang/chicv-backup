@@ -22,3 +22,6 @@ class _util:
 		s.login(mailConf['email'],mailConf['password']);
 		s.sendmail(mailConf['email'],mailConf['to'],message);
 
+	@staticmethod
+	def escapePath(path):
+		return path.replace(" ","\\ ")

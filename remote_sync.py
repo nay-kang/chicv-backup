@@ -21,7 +21,7 @@ class EventHandler(pyinotify.ProcessEvent):
 		remote_path = event.pathname.replace(conf['local'],'');
 		if event.dir:
 			remote_path = re.sub(r'\/.*$','','/'+remote_path)
-		cmd = 'scp -r %s %s/%s'%(event.pathname,conf['remote'],remote_path);
+		cmd = 'scp -r %s %s/\"%s\"'%(_util.escapePath(event.pathname),conf['remote'],_util.escapePath(remote_path));
 
 		print event
 		if not (not event.dir and event.maskname == 'IN_CREATE'):
@@ -29,6 +29,6 @@ class EventHandler(pyinotify.ProcessEvent):
 			os.system(cmd)
 
 notifier = pyinotify.AsyncNotifier(wm, EventHandler())
-wdd = wm.add_watch(conf['local'], mask, rec=True)
+wdd = wm.add_watch(conf['local'], mask, rec=True,auto_add=True)
 
 asyncore.loop()
