@@ -2,6 +2,8 @@ import os
 import sys
 from _util import _util
 from datetime import datetime
+import socket
+import urllib2
 
 #generat current data string
 today = datetime.now()
@@ -36,6 +38,31 @@ def tarFiles():
     if(code!=0):
         _util.sendMail('tar file','tar file failed')
         return
+
+def simpleWebTest():
+    socket.setdefaulttimeout(15)
+    if(len(sys.argv)<3):
+        print 'there is no url in argv';
+    url = sys.argv[2]
+    req = urllib2.Request(url)
+    isPass = False
+    emailContent = 'url is :'+url
+    #emailContent = 'url test failed';
+    try:
+        response = urllib2.urlopen(req)
+        body = response.read()
+        if(body.find('<!DOCTYPE html>')==0):
+            print 'test ok',today
+            isPass = True
+        else:
+            isPass = False
+            emailContent += 'status is 200,but content is not right\n'+body;
+    except urllib2.HTTPError as e:
+        print e.code
+        #print e.read()
+        emailContent += 'status code:'+str(e.code)+'\n'+e.read()
+    if(not isPass):
+        _util.sendMail('web test failed',emailContent)
 
 def uploadToS3():
     #TODO

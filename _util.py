@@ -20,7 +20,11 @@ class _util:
 		s.connect(mailConf['host'],mailConf['port']);
 		s.starttls();
 		s.login(mailConf['email'],mailConf['password']);
-		s.sendmail(mailConf['email'],mailConf['to'],message);
+		msg = MIMEText(message)
+		msg['Subject'] = subject
+		msg['From'] = mailConf['email']
+		msg['To'] = mailConf['email']
+		s.sendmail(mailConf['email'],mailConf['to'],msg.as_string());
 
 	@staticmethod
 	def escapePath(path):
