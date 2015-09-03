@@ -21,11 +21,13 @@ def backupDatabase():
     code = os.system(cmd);
     cmd = 'rm -rf %s-%s.sql'%(dbConf['database'],today_str)
     code = os.system(cmd);
+    if(code!=0):
+	_util.sendMail('database','database tar error,maybe out of space')
 
 #rsync all image files
 def rsyncFiles():
     fileConf = _util.readConf('remote_sync.json')
-    cmd = 'rsync -vrczL --delete --stats %s %s'%(fileConf['local'],fileConf['remote'])
+    cmd = 'rsync -vrczL --delete --stats --chmod=a+rwx --perms %s %s'%(fileConf['local'],fileConf['remote'])
     code = os.system(cmd)
     if(code!=0):
         _util.sendMail('file rsync','file rsync failed')
