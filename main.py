@@ -4,6 +4,7 @@ from _util import _util
 from datetime import datetime
 import socket
 import urllib2
+import re
 
 #generat current data string
 today = datetime.now()
@@ -23,6 +24,7 @@ def backupDatabase():
     code = os.system(cmd);
     if(code!=0):
 	_util.sendMail('database','database tar error,maybe out of space')
+    clearBackupDBHistory()
 
 #rsync all image files
 def rsyncFiles():
@@ -65,6 +67,39 @@ def simpleWebTest():
         emailContent += 'status code:'+str(e.code)+'\n'+e.read()
     if(not isPass):
         _util.sendMail('web test failed',emailContent)
+
+def clearBackupDBHistory():
+    dbConf = _util.readConf('db.json')
+    files = os.listdir(dbConf['backup_path'])
+    remainFiles = dict()
+    deleteFiles = []
+    p = re.compile('^stylewe-(\d{8}).*\.sql');
+    
+    for i in range(len(files)):
+        m = p.match(files[i])
+        
+        # not a regular auto backup file
+        if not m:
+            continue
+
+        backDate = m.group(1)
+        backDate = datetime.strptime(backDate,'%Y%m%d');
+        
+        # if backup time in 30 days don't delete
+        if (today-backDate).days < dbConf['remain_days']:
+            continue
+
+        yearWeek = `backDate.isocalendar()[0]`+'_'+`backDate.isocalendar()[1]`
+        
+        if remainFiles.has_key(yearWeek):
+            print 'delete:',files[i]
+            cmd = 'rm -rf '+dbConf['backup_path']+files[i]
+            print cmd
+            os.system(cmd)
+        else:
+            remainFiles[yearWeek] = True
+            print 'remain:',files[i]
+    
 
 def uploadToS3():
     #TODO

@@ -3,5 +3,6 @@
     "user":"root",
     "password":"root",
     "database":"database",
-    "backup_path":"path"
+    "backup_path":"path",
+    "remain_days":30
 }
