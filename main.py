@@ -71,6 +71,7 @@ def simpleWebTest():
 def clearBackupDBHistory():
     dbConf = _util.readConf('db.json')
     files = os.listdir(dbConf['backup_path'])
+    files.sort()
     remainFiles = dict()
     deleteFiles = []
     p = re.compile('^stylewe-(\d{8}).*\.sql');
