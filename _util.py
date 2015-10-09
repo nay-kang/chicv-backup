@@ -16,9 +16,13 @@ class _util:
 	@staticmethod
 	def sendMail(subject,message):
 		mailConf = _util.readConf('mail.json')
-		s = smtplib.SMTP();
-		s.connect(mailConf['host'],mailConf['port']);
-		s.starttls();
+		if mailConf['encryption']=='ssl':
+			s = smtplib.SMTP_SSL(mailConf['host'],mailConf['port'])
+		else :
+			s = smtplib.SMTP(mailConf['host'],mailConf['port']);
+			s.starttls();
+
+		#s.connect(mailConf['host'],mailConf['port']);
 		s.login(mailConf['email'],mailConf['password']);
 		msg = MIMEText(message)
 		msg['Subject'] = subject

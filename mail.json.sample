@@ -3,5 +3,6 @@
     "password":"123",
     "host":"smtp.com",
     "port":587,
-    "to":"c@b.c"
+    "to":"c@b.c",
+    "encryption":"tls"
 }
