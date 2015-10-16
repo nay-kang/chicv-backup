@@ -14,7 +14,7 @@ class _util:
 
 	#send email function
 	@staticmethod
-	def sendMail(subject,message):
+	def sendMail(subject,message,to=None):
 		mailConf = _util.readConf('mail.json')
 		if mailConf['encryption']=='ssl':
 			s = smtplib.SMTP_SSL(mailConf['host'],mailConf['port'])
@@ -27,8 +27,12 @@ class _util:
 		msg = MIMEText(message)
 		msg['Subject'] = subject
 		msg['From'] = mailConf['email']
-		msg['To'] = mailConf['email']
-		s.sendmail(mailConf['email'],mailConf['to'],msg.as_string());
+		if to == None:
+			to = mailConf['to']
+
+		#to = to if to else mailConf['to']
+		msg['To'] = to
+		s.sendmail(mailConf['email'],to,msg.as_string());
 
 	@staticmethod
 	def escapePath(path):

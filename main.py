@@ -107,6 +107,9 @@ def uploadToS3():
     print "go S3"
     return
 
+def sendMail():
+	_util.sendMail(sys.argv[3],sys.argv[4],sys.argv[2])	
+
 context = sys.modules[__name__]
 funcName = sys.argv[1];
 if funcName in dir(context):
