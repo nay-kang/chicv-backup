@@ -23,7 +23,7 @@ def backupDatabase():
     cmd = 'rm -rf %s-%s.sql'%(dbConf['database'],today_str)
     code = os.system(cmd);
     if(code!=0):
-	_util.sendMail('database','database tar error,maybe out of space')
+        _util.sendMail('database','database tar error,maybe out of space')
     clearBackupDBHistory()
 
 #rsync all image files
@@ -108,7 +108,15 @@ def uploadToS3():
     return
 
 def sendMail():
-	_util.sendMail(sys.argv[3],sys.argv[4],sys.argv[2])	
+    content = ''
+    if len(sys.argv) >= 5:
+        content = sys.argv[4]
+    else:
+        stdin = sys.stdin.readlines()
+        for i in range(len(stdin)):
+            content = content+stdin[i]
+
+    _util.sendMail(sys.argv[3],content,sys.argv[2]) 
 
 context = sys.modules[__name__]
 funcName = sys.argv[1];

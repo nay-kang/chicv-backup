@@ -30,7 +30,6 @@ class _util:
 		if to == None:
 			to = mailConf['to']
 
-		#to = to if to else mailConf['to']
 		msg['To'] = to
 		s.sendmail(mailConf['email'],to,msg.as_string());
 
