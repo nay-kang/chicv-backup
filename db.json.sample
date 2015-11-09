@@ -1,5 +1,6 @@
 {
     "bin":"/usr/bin/mysqldump",
+    "host":"127.0.0.1",
     "user":"root",
     "password":"root",
     "database":"database",

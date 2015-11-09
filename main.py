@@ -13,8 +13,10 @@ today_str = today.strftime('%Y%m%d_%H%M')
 #backup database
 def backupDatabase():
     dbConf = _util.readConf('db.json')
-    cmd = "%s -u%s -p%s %s > %s-%s.sql"%(dbConf['bin'],dbConf['user'],dbConf['password'],dbConf['database'],dbConf['database'],today_str);
+    cmd = "%s -u%s -p%s -h%s %s --skip-lock-tables > %s-%s.sql"%(dbConf['bin'],dbConf['user'],dbConf['password'],dbConf['host'],dbConf['database'],dbConf['database'],today_str);
+    print cmd
     code = os.system(cmd);
+    print 'code',code
     if(code!=0):
         _util.sendMail('database','database export error')
         return
