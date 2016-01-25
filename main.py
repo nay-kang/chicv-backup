@@ -9,6 +9,7 @@ import requests
 import json
 import urllib
 import time
+import urlparse
 
 
 #generat current data string
@@ -159,7 +160,21 @@ def downProductPics():
             path = os.path.dirname(localDir+imageUrl)
             if not os.path.exists(path):
                 os.makedirs(os.path.dirname(localDir+imageUrl))
-            urllib.urlretrieve("https://www.stylewe.com/"+imageUrl,localDir+imageUrl)
+            try:
+                urllib.urlretrieve(u"https://www.stylewe.com/"+iriToUri(imageUrl),localDir+imageUrl)
+            except:
+                print sys.exc_info()
+
+
+def urlEncodeNonAscii(b):
+    return re.sub('[\x80-\xFF]', lambda c: '%%%02x' % ord(c.group(0)), b)
+
+def iriToUri(iri):
+    parts= urlparse.urlparse(iri)
+    return urlparse.urlunparse(
+        part.encode('idna') if parti==1 else urlEncodeNonAscii(part.encode('utf-8'))
+        for parti, part in enumerate(parts)
+    )
 
 context = sys.modules[__name__]
 funcName = sys.argv[1];
