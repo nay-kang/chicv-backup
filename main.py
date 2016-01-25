@@ -160,7 +160,6 @@ def downProductPics():
             if not os.path.exists(path):
                 os.makedirs(os.path.dirname(localDir+imageUrl))
             urllib.urlretrieve("https://www.stylewe.com/"+imageUrl,localDir+imageUrl)
-            time.sleep(2)
 
 context = sys.modules[__name__]
 funcName = sys.argv[1];
