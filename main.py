@@ -5,6 +5,11 @@ from datetime import datetime
 import socket
 import urllib2
 import re
+import requests
+import json
+import urllib
+import time
+
 
 #generat current data string
 today = datetime.now()
@@ -119,6 +124,43 @@ def sendMail():
             content = content+stdin[i]
 
     _util.sendMail(sys.argv[3],content,sys.argv[2]) 
+
+def dumpAllProducts():
+    params = {
+        "exclude_flash_sale":"0",
+        "exclude_activity_promotion":"0"
+    };
+    start = 0;
+    products = [];
+    cursor = "open"
+    while True:
+        params["cursor"] = cursor
+        r = requests.get("http://l.stylewe.com/rest/productindex",params=params)
+        products+=r.json()["list"]
+        print(len(r.json()["list"]))
+        if len(r.json()["list"])==0:
+            break
+        cursor = r.json()['cursor']
+    
+    with open('products.json','w') as jsonFile:
+        json.dump(products,jsonFile)
+
+    print(len(products))
+
+def downProductPics():
+    with open('products.json','r') as jsonFile:
+        localDir = sys.argv[2]
+        products = json.load(jsonFile)
+    products_len = len(products)
+    for i in range(products_len):
+        imageUrl = "image_cache/fill/ffffff/600x600/"+products[i]['images'][0]['image']
+        if not os.path.isfile(localDir+imageUrl):
+            print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+            path = os.path.dirname(localDir+imageUrl)
+            if not os.path.exists(path):
+                os.makedirs(os.path.dirname(localDir+imageUrl))
+            urllib.urlretrieve("https://www.stylewe.com/"+imageUrl,localDir+imageUrl)
+            time.sleep(2)
 
 context = sys.modules[__name__]
 funcName = sys.argv[1];
