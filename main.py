@@ -156,6 +156,7 @@ def downProductPics():
     products_len = len(products)
     for i in range(products_len):
         imageUrl = "image_cache/fill/ffffff/600x600/"+products[i]['images'][0]['image']
+        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
         if not os.path.isfile(localDir+imageUrl):
             print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
             path = os.path.dirname(localDir+imageUrl)
