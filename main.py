@@ -83,23 +83,23 @@ def clearBackupDBHistory():
     remainFiles = dict()
     deleteFiles = []
     p = re.compile('^stylewe-(\d{8}).*\.sql');
-    
+
     for i in range(len(files)):
         m = p.match(files[i])
-        
+
         # not a regular auto backup file
         if not m:
             continue
 
         backDate = m.group(1)
         backDate = datetime.strptime(backDate,'%Y%m%d');
-        
+
         # if backup time in 30 days don't delete
         if (today-backDate).days < dbConf['remain_days']:
             continue
 
         yearWeek = `backDate.isocalendar()[0]`+'_'+`backDate.isocalendar()[1]`
-        
+
         if remainFiles.has_key(yearWeek):
             print 'delete:',files[i]
             cmd = 'rm -rf '+dbConf['backup_path']+files[i]
@@ -108,7 +108,7 @@ def clearBackupDBHistory():
         else:
             remainFiles[yearWeek] = True
             print 'remain:',files[i]
-    
+
 
 def uploadToS3():
     #TODO
@@ -124,7 +124,7 @@ def sendMail():
         for i in range(len(stdin)):
             content = content+stdin[i]
 
-    _util.sendMail(sys.argv[3],content,sys.argv[2]) 
+    _util.sendMail(sys.argv[3],content,sys.argv[2])
 
 def dumpAllProducts():
     params = {
@@ -136,13 +136,13 @@ def dumpAllProducts():
     cursor = "open"
     while True:
         params["cursor"] = cursor
-        r = requests.get("http://l.stylewe.com/rest/productindex",params=params)
+        r = requests.get("https://www.stylewe.com/rest/productindex",params=params)
         products+=r.json()["list"]
         print(len(r.json()["list"]))
         if len(r.json()["list"])==0:
             break
         cursor = r.json()['cursor']
-    
+
     with open('products.json','w') as jsonFile:
         json.dump(products,jsonFile)
 
