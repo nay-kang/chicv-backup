@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 from _util import _util
@@ -179,6 +180,8 @@ def iriToUri(iri):
 context = sys.modules[__name__]
 funcName = sys.argv[1];
 if funcName in dir(context):
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
     getattr(context,funcName)()
 else:
     print 'function:'+funcName+' not exists!'
