@@ -11,6 +11,8 @@ import json
 import urllib
 import time
 import urlparse
+import threading
+import thread
 
 
 #generat current data string
@@ -130,7 +132,8 @@ def sendMail():
 def dumpAllProducts():
     params = {
         "exclude_flash_sale":"0",
-        "exclude_activity_promotion":"0"
+        "exclude_activity_promotion":"0",
+        "sorts":"-point"
     };
     start = 0;
     products = [];
@@ -155,18 +158,55 @@ def downProductPics():
         products = json.load(jsonFile)
     products_len = len(products)
     for i in range(products_len):
-        imageUrl = u"image_cache/fill/ffffff/600x600/"+products[i]['images'][0]['image']
+        if (len(products[i]['images']) <2):
+            continue;
+        imageUrl = u"image_cache/resize/106x140/"+products[i]['images'][0]['image']
         print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-        if not os.path.isfile(localDir+imageUrl):
-            print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-            path = os.path.dirname(localDir+imageUrl)
-            if not os.path.exists(path):
-                os.makedirs(os.path.dirname(localDir+imageUrl))
-            try:
-                urllib.urlretrieve(u"https://www.stylewe.com/"+iriToUri(imageUrl),localDir+imageUrl)
-            except:
-                print sys.exc_info()
+        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
 
+        imageUrl = u"image_cache/resize/106x140/"+products[i]['images'][1]['image']
+        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+
+        imageUrl = u"image_cache/resize/250x333/"+products[i]['images'][0]['image']
+        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+
+        imageUrl = u"image_cache/resize/250x333/"+products[i]['images'][1]['image']
+        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+        for j in range(len(products[i]['images'])):
+            imageUrl = u"image_cache/resize/480x640/"+products[i]['images'][j]['image']
+            print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+            downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+
+            imageUrl = u"image_cache/resize/80x106/"+products[i]['images'][j]['image']
+            print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+            downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+
+def downFileThread(domain,url,localDir):
+    print threading.activeCount()
+    while True:
+        if threading.activeCount()>10:
+            time.sleep(1)
+        else:
+            t = threading.Thread(target=downFile,args=(domain,url,localDir,))
+            t.start()
+            return True
+
+
+def downFile(domain,url,localDir):
+    if not os.path.isfile(localDir+url):
+        print("Downloading:"+url)
+        d_file = localDir+url
+        path = os.path.dirname(d_file)
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+        try:
+            urllib.urlretrieve(domain+iriToUri(url),d_file)
+        except:
+            print sys.exc_info()
 
 def urlEncodeNonAscii(b):
     return re.sub('[\x80-\xFF]', lambda c: '%%%02x' % ord(c.group(0)), b)
