@@ -130,6 +130,7 @@ def sendMail():
     _util.sendMail(sys.argv[3],content,sys.argv[2])
 
 def dumpAllProducts():
+    domain = sys.argv[2];
     params = {
         "exclude_flash_sale":"0",
         "exclude_activity_promotion":"0",
@@ -140,7 +141,7 @@ def dumpAllProducts():
     cursor = "open"
     while True:
         params["cursor"] = cursor
-        r = requests.get("https://www.stylewe.com/rest/productindex",params=params)
+        r = requests.get(domain+"/rest/productindex",params=params)
         products+=r.json()["list"]
         print(len(r.json()["list"]))
         if len(r.json()["list"])==0:
@@ -154,35 +155,21 @@ def dumpAllProducts():
 
 def downProductPics():
     with open('products.json','r') as jsonFile:
-        localDir = sys.argv[2]
         products = json.load(jsonFile)
+
+    localDir = sys.argv[2]
+    domain = sys.argv[3]
+    image_params = sys.argv[4]
+    image_index = sys.argv[5]    
     products_len = len(products)
     for i in range(products_len):
-        if (len(products[i]['images']) <2):
-            continue;
-        imageUrl = u"image_cache/resize/106x140/"+products[i]['images'][0]['image']
-        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+        max_image_index = min(len(products[i]['images']),image_index)
 
-        imageUrl = u"image_cache/resize/106x140/"+products[i]['images'][1]['image']
-        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
-
-        imageUrl = u"image_cache/resize/250x333/"+products[i]['images'][0]['image']
-        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
-
-        imageUrl = u"image_cache/resize/250x333/"+products[i]['images'][1]['image']
-        print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-        downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
-        for j in range(len(products[i]['images'])):
-            imageUrl = u"image_cache/resize/480x640/"+products[i]['images'][j]['image']
+        for j in range(max_image_index):
+            imageUrl = u"/image_cache/"+image_params+products[i]['images'][j]['image']
             print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-            downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
+            downFileThread(domain,imageUrl,localDir)
 
-            imageUrl = u"image_cache/resize/80x106/"+products[i]['images'][j]['image']
-            print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
-            downFileThread(u"https://www.stylewe.com/",imageUrl,localDir)
 
 def downFileThread(domain,url,localDir):
     print threading.activeCount()
