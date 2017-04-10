@@ -141,7 +141,7 @@ def dumpAllProducts():
     cursor = "open"
     while True:
         params["cursor"] = cursor
-        r = requests.get(domain+"/rest/productindex",params=params,verify=False,headers={'Accept-Encoding':'deflate, gzip'})
+        r = requests.get(domain+"/rest/productindex",params=params,verify=False,headers={'Accept-Encoding':'deflate, gzip','Accept':'*/*','User-Agent':'Guangzhou/BoxImageDownlaoder'})
         products+=r.json()["list"]
         print(len(r.json()["list"]))
         if len(r.json()["list"])==0:
