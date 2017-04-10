@@ -141,7 +141,7 @@ def dumpAllProducts():
     cursor = "open"
     while True:
         params["cursor"] = cursor
-        r = requests.get(domain+"/rest/productindex",params=params)
+        r = requests.get(domain+"/rest/productindex",params=params,verify=False,headers={'Accept-Encoding':'deflate, gzip'})
         products+=r.json()["list"]
         print(len(r.json()["list"]))
         if len(r.json()["list"])==0:
@@ -167,7 +167,7 @@ def downProductPics():
 
         for j in range(max_image_index):
             imageUrl = u"/image_cache/"+image_params+products[i]['images'][j]['image']
-            print("Downloading:("+`(i+1)`+"/"+`products_len`+")"+imageUrl)
+            print("Downloading:("+`(i+1)`+":"+j+"/"+`products_len`+")"+imageUrl)
             downFileThread(domain,imageUrl,localDir)
 
 
