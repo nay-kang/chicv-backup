@@ -161,6 +161,8 @@ def downProductPics():
     domain = sys.argv[3]
     image_params = sys.argv[4]
     image_index = sys.argv[5]
+    image_index = int(image_index)
+
     products_len = len(products)
     for i in range(products_len):
         max_image_index = min(len(products[i]['images']),image_index)
