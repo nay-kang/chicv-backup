@@ -160,7 +160,7 @@ def downProductPics():
     localDir = sys.argv[2]
     domain = sys.argv[3]
     image_params = sys.argv[4]
-    image_index = sys.argv[5]    
+    image_index = sys.argv[5]
     products_len = len(products)
     for i in range(products_len):
         max_image_index = min(len(products[i]['images']),image_index)
@@ -174,7 +174,7 @@ def downProductPics():
 def downFileThread(domain,url,localDir):
     print threading.activeCount()
     while True:
-        if threading.activeCount()>10:
+        if threading.activeCount()>5:
             time.sleep(1)
         else:
             t = threading.Thread(target=downFile,args=(domain,url,localDir,))
