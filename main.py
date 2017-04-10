@@ -167,7 +167,7 @@ def downProductPics():
 
         for j in range(max_image_index):
             imageUrl = u"/image_cache/"+image_params+products[i]['images'][j]['image']
-            print("Downloading:("+`(i+1)`+":"+j+"/"+`products_len`+")"+imageUrl)
+            print("Downloading:("+`(i+1)`+":"+`j`+"/"+`products_len`+")"+imageUrl)
             downFileThread(domain,imageUrl,localDir)
 
 
